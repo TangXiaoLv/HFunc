@@ -1,8 +1,7 @@
 # HFunc
 中文 | [English](https://github.com/TangXiaoLv/HFunc/blob/master/README.md) 
 
-一个快速简单轻量级高阶函数库，支持串行，并行计算。
-
+一个快速简单轻量级高阶函数库，支持串行，并行计算。适用于Java，Android。
 Support
 ---
 + map
