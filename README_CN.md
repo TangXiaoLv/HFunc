@@ -1,7 +1,7 @@
 # HFunc
 English | [中文](https://github.com/TangXiaoLv/TelegramGallery/blob/master/README_CN.md) 
 
-A fast and simple Java Higher-order function lib. Support serial compute and parallel compute.
+一个快速简单轻量级高阶函数库，支持串行，并行计算。
 
 Support
 ---
@@ -11,8 +11,7 @@ Support
 
 Guide
 ---
-	Example:
-	//data collection
+	示例数据集：
     List<Integer> c = new ArrayList<>();
     for (int i = 1; i < 101; i++) {
         c.add(i);
@@ -23,9 +22,9 @@ Guide
 <img src="img/1.png" height= "228" width="220">
 
 ```
-Assumptions: Each applies function consumes 10ms
-serial compute: 1078ms
-parallel compute: 150ms
+假设: 每个应用方法消耗10ms
+串行计算: 1078ms
+并行计算: 150ms
 ```
 
 **filter:**
@@ -33,9 +32,9 @@ parallel compute: 150ms
 <img src="img/3.png" height= "228" width="220">
 
 ```
-Assumptions: Each applies function consumes 10ms
-serial compute: 1037ms
-parallel compute: 159ms
+假设: 每个应用方法消耗10ms
+串行计算: 1037ms
+并行计算: 159ms
 ```
 
 [**reduce:**](https://research.google.com/archive/mapreduce.html)
@@ -43,9 +42,9 @@ parallel compute: 159ms
 <img src="img/2.png" height= "128" width="480">
 
 ```
-Assumptions: Each applies function consumes 10ms
-serial compute: 1061ms
-parallel compute: 239ms
+假设: 每个应用方法消耗10ms
+串行计算: 1061ms
+并行计算: 239ms
 ```
 
 LICENSE

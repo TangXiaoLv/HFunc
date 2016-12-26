@@ -1,9 +1,24 @@
+/**
+ * Copyright 2014 XiaoLv Tang, Inc.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+package hf;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -11,31 +26,51 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * <li>Description :高阶函数实现,支持{@link HFunc#map}{@link HFunc#filter}{@link HFunc#reduce}串行，并行计算
- * <li>Created by tangxiaolv on 2016/12/20.
- * <li>Job number：138710
- * <li>Phone ：13601100793
- * <li>Email：tangxiaolv@syswin.com
- * <li>Person in charge : tangxiaolv
- * <li>Leader：tangxiaolv
+ * A fast and simple Java Higher-order function lib. Support serial compute and parallel compute.
+ * <p>
+ * Support {@link HFunc#map}{@link HFunc#filter}{@link HFunc#reduce}
  */
 public class HFunc {
 
+    /**
+     * current available processors
+     */
     private static final int PROCESSORS = Runtime.getRuntime().availableProcessors();
+
+    /**
+     * corePoolSize and maximumPoolSize
+     * <p>
+     * see {@link ThreadPoolExecutor#ThreadPoolExecutor(int, int, long, TimeUnit, BlockingQueue)}
+     * <p>
+     */
     private static final int MAX_THREAD = PROCESSORS * 2;
+
+    /**
+     * the keepAliveTime for Thread
+     * <p>
+     * see {@link ThreadPoolExecutor#ThreadPoolExecutor(int, int, long, TimeUnit, BlockingQueue)}
+     * <p>
+     */
     private static final int THREAD_TIME_OUT = 60;//SECONDS
+
+    /**
+     * used to parallel compute for Higher-order function
+     * <p>
+     * see {@link ThreadPoolExecutor#ThreadPoolExecutor(int, int, long, TimeUnit, BlockingQueue)}
+     * <p>
+     */
     private static volatile ThreadPoolExecutor mThreadPoolExecutor;
 
     /**
-     * Map转换函数：作用于集合每个Item，串行计算
+     * Returns an list that applies a specified function to each item.This is serial compute.
      *
-     * @param c    集合
-     * @param func 转换函数
-     * @param <E>  集合泛型
-     * @param <R>  返回值集合泛型
-     * @return List<R>
+     * @param c    collection with date item
+     * @param func a function to apply to each item
+     * @param <E>  collection item type
+     * @param <R>  the result type
+     * @return List<R> the result transformed by the specified function
      */
-    public static <E, R> List<R> map(Collection<E> c, Func0<E, R> func) {
+    public static <E, R> List<R> map(Collection<E> c, Func1<E, R> func) {
         if (c == null || c.size() == 0 || func == null) {
             return Collections.emptyList();
         }
@@ -48,35 +83,37 @@ public class HFunc {
     }
 
     /**
-     * Map转换函数：作用于集合每个Item，并行计算，最大并发量{@link HFunc#MAX_THREAD}
+     * Returns an list that applies a specified function to each item.This is parallel compute.
+     * The concurrent quantity see{@link HFunc#MAX_THREAD}
      *
-     * @param c    数据集合
-     * @param func 转换函数
-     * @param <E>  集合泛型
-     * @param <R>  返回值集合泛型
-     * @return List<R>
+     * @param c    collection with date item
+     * @param func a function to apply to each item
+     * @param <E>  collection item type
+     * @param <R>  the result type
+     * @return List<R> the result transformed by the specified function
      */
-    public static <E, R> List<R> mapParallel(Collection<E> c, final Func0<E, R> func) {
+    public static <E, R> List<R> mapParallel(Collection<E> c, final Func1<E, R> func) {
         return mapParallel(null, c, func);
     }
 
     /**
-     * Map转换函数：作用于集合每个Item，并行计算，最大并发量{@link HFunc#MAX_THREAD}
+     * Returns an list that applies a specified function to each item.This is parallel compute.
+     * The concurrent quantity see{@link HFunc#MAX_THREAD}
      *
      * @param executor {@link ExecutorService}
-     * @param c        集合
-     * @param func     转换函数
-     * @param <E>      集合泛型
-     * @param <R>      返回值集合泛型
-     * @return List<R>
+     * @param c        collection with date item
+     * @param func     a function to apply to each item
+     * @param <E>      collection item type
+     * @param <R>      the result type
+     * @return List<R> the result transformed by the specified function
      */
-    public static <E, R> List<R> mapParallel(ExecutorService executor, Collection<E> c, final Func0<E, R> func) {
+    public static <E, R> List<R> mapParallel(ExecutorService executor, Collection<E> c, final Func1<E, R> func) {
         if (c == null || c.size() == 0 || func == null) {
             return Collections.emptyList();
         }
         int size = c.size();
         if (size == 1) {
-            return map(c, new Func0<E, R>() {
+            return map(c, new Func1<E, R>() {
                 @Override
                 public R call(E item) {
                     return func.call(item);
@@ -92,7 +129,7 @@ public class HFunc {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    Func0Inner<E, R> f = new Func0Inner<>(func, index);
+                    Func1Inner<E, R> f = new Func1Inner<>(func, index);
                     R r = f.call(item);
                     arr[f.getIndex()] = r;
                     latch.countDown();
@@ -110,14 +147,14 @@ public class HFunc {
     }
 
     /**
-     * filter过滤函数：作用于集合每个Item，串行计算
+     * Returns an list that applies a specified function to each item.This is serial compute.
      *
-     * @param c    数据集合
-     * @param func 过滤函数
-     * @param <E>  集合泛型
-     * @return List<E>
+     * @param c    collection with date item
+     * @param func a function to apply to each item
+     * @param <E>  collection item type
+     * @return List<E> the result transformed by the specified function
      */
-    public static <E> List<E> filter(Collection<E> c, Func0<E, Boolean> func) {
+    public static <E> List<E> filter(Collection<E> c, Func1<E, Boolean> func) {
         if (c == null || c.size() == 0 || func == null) {
             return Collections.emptyList();
         }
@@ -131,33 +168,35 @@ public class HFunc {
     }
 
     /**
-     * filter过滤函数：作用于集合每个Item，并行计算，最大并发量{@link HFunc#MAX_THREAD}
+     * Returns an list that applies a specified function to each item.This is parallel compute.
+     * The concurrent quantity see{@link HFunc#MAX_THREAD}
      *
-     * @param c    数据集合
-     * @param func 过滤函数
-     * @param <E>  集合泛型
-     * @return List<E>
+     * @param c    collection with date item
+     * @param func a function to apply to each item
+     * @param <E>  collection item type
+     * @return List<E> the result transformed by the specified function
      */
-    public static <E> List<E> filterParallel(Collection<E> c, Func0<E, Boolean> func) {
+    public static <E> List<E> filterParallel(Collection<E> c, Func1<E, Boolean> func) {
         return filterParallel(null, c, func);
     }
 
     /**
-     * filter过滤函数：作用于集合每个Item，并行计算，最大并发量{@link HFunc#MAX_THREAD}
+     * Returns an list that applies a specified function to each item.This is parallel compute.
+     * The concurrent quantity see{@link HFunc#MAX_THREAD}
      *
      * @param executor {@link ExecutorService}
-     * @param c        数据集合
-     * @param func     过滤函数
-     * @param <E>      集合泛型
-     * @return List<E>
+     * @param c        collection with date item
+     * @param func     a function to apply to each item
+     * @param <E>      collection item type
+     * @return List<E> the result transformed by the specified function
      */
-    public static <E> List<E> filterParallel(ExecutorService executor, Collection<E> c, final Func0<E, Boolean> func) {
+    public static <E> List<E> filterParallel(ExecutorService executor, Collection<E> c, final Func1<E, Boolean> func) {
         if (c == null || c.size() == 0 || func == null) {
             return Collections.emptyList();
         }
         int size = c.size();
         if (size == 1) {
-            return filter(c, new Func0<E, Boolean>() {
+            return filter(c, new Func1<E, Boolean>() {
                 @Override
                 public Boolean call(E item) {
                     return func.call(item);
@@ -173,7 +212,7 @@ public class HFunc {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    Func0Inner<E, Boolean> f = new Func0Inner<>(func, index);
+                    Func1Inner<E, Boolean> f = new Func1Inner<>(func, index);
                     if (f.call(item)) {
                         arr[f.getIndex()] = item;
                     }
@@ -189,7 +228,7 @@ public class HFunc {
             return Collections.emptyList();
         }
 
-        return filter(Arrays.asList(arr), new Func0<E, Boolean>() {
+        return filter(Arrays.asList(arr), new Func1<E, Boolean>() {
             @Override
             public Boolean call(E item) {
                 return item != null;
@@ -198,14 +237,14 @@ public class HFunc {
     }
 
     /**
-     * reduce作用函数：作用于集合每个Item
+     * Return a merges result that applies a specified function to each item.This is serial compute.
      *
-     * @param c    数据集合
-     * @param func 集合泛型
-     * @param <E>  集合泛型
-     * @return 最后结果
+     * @param c    collection with date item
+     * @param func a function to apply to each item
+     * @param <E>  collection item type
+     * @return the result transformed by the specified function
      */
-    public static <E> E reduce(Collection<E> c, Func1<E, E> func) {
+    public static <E> E reduce(Collection<E> c, Func2<E, E, E> func) {
         if (c == null || c.size() == 0 || func == null) {
             return null;
         }
@@ -220,28 +259,30 @@ public class HFunc {
     }
 
     /**
-     * reduce作用函数：作用于集合每个Item，并行计算，最大并发量{@link HFunc#MAX_THREAD}
+     * Return a merges result that applies a specified function to each item.This is parallel compute.
+     * The concurrent quantity see{@link HFunc#MAX_THREAD}
      *
-     * @param c    数据集合
-     * @param func 集合泛型
-     * @param <E>  集合泛型
-     * @return 最后结果
+     * @param c    collection with date item
+     * @param func a function to apply to each item
+     * @param <E>  collection item type
+     * @return the result transformed by the specified function
      */
-    public static <E> E reduceParallel(Collection<E> c, Func1<E, E> func) {
+    public static <E> E reduceParallel(Collection<E> c, Func2<E, E, E> func) {
         return reduceParallel(null, c, func);
 
     }
 
     /**
-     * reduce作用函数：作用于集合每个Item，并行计算，最大并发量{@link HFunc#MAX_THREAD}
+     * Return a merges result that applies a specified function to each item.This is parallel compute.
+     * The concurrent quantity see{@link HFunc#MAX_THREAD}
      *
      * @param executor {@link ExecutorService}
-     * @param c        数据集合
-     * @param func     集合泛型
-     * @param <E>      集合泛型
-     * @return 最后结果
+     * @param c        collection with date item
+     * @param func     a function to apply to each item
+     * @param <E>      collection item type
+     * @return the result transformed by the specified function
      */
-    public static <E> E reduceParallel(ExecutorService executor, Collection<E> c, Func1<E, E> func) {
+    public static <E> E reduceParallel(ExecutorService executor, Collection<E> c, Func2<E, E, E> func) {
         if (c == null || c.size() == 0 || func == null) {
             return null;
         }
@@ -268,7 +309,7 @@ public class HFunc {
             executor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    finals.add(reduce(split, new Func1<E, E>() {
+                    finals.add(reduce(split, new Func2<E, E, E>() {
                         @Override
                         public E call(E merge, E next) {
                             return func.call(merge, next);
@@ -286,7 +327,7 @@ public class HFunc {
         }
 
         //Summary
-        return reduce(finals, new Func1<E, E>() {
+        return reduce(finals, new Func2<E, E, E>() {
             @Override
             public E call(E merge, E next) {
                 return func.call(merge, next);
@@ -294,6 +335,7 @@ public class HFunc {
         });
     }
 
+    //Create ExecutorService
     private synchronized static ExecutorService defES(int size) {
         if (mThreadPoolExecutor != null) {
             return mThreadPoolExecutor;
@@ -305,14 +347,14 @@ public class HFunc {
     }
 
     /**
-     * 有序函数
+     * the function with index
      */
-    private static class Func0Inner<E, R> {
-        private Func0<E, R> func0;
+    private static class Func1Inner<E, R> {
+        private Func1<E, R> func1;
         private int index;
 
-        Func0Inner(Func0<E, R> func, int index) {
-            this.func0 = func;
+        Func1Inner(Func1<E, R> func, int index) {
+            this.func1 = func;
             this.index = index;
         }
 
@@ -321,27 +363,28 @@ public class HFunc {
         }
 
         R call(E item) {
-            return func0.call(item);
+            return func1.call(item);
         }
     }
 
     /**
-     * 作用函数
+     * Represents a function with one arguments.
      *
-     * @param <E> 入参泛型
-     * @param <R> 返回值泛型
+     * @param <E> the first argument type
+     * @param <R> the result type
      */
-    public interface Func0<E, R> {
+    public interface Func1<E, R> {
         public R call(E item);
     }
 
     /**
-     * 作用函数
+     * Represents a function with two arguments.
      *
-     * @param <E> 入参泛型
-     * @param <R> 返回值泛型
+     * @param <E1> the first argument type
+     * @param <E2> the second argument type
+     * @param <R>  the result type
      */
-    public interface Func1<E, R> {
-        public R call(E merge, E next);
+    public interface Func2<E1, E2, R> {
+        public R call(E1 merge, E2 next);
     }
 }
