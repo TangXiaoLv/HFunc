@@ -1,5 +1,5 @@
 # HFunc
-English | [中文](https://github.com/TangXiaoLv/TelegramGallery/blob/master/README_CN.md) 
+中文 | [English](https://github.com/TangXiaoLv/HFunc/blob/master/README.md) 
 
 一个快速简单轻量级高阶函数库，支持串行，并行计算。
 
