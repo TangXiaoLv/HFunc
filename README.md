@@ -2,7 +2,7 @@
 English | [中文](https://github.com/TangXiaoLv/HFunc/blob/master/README_CN.md) 
 
 A fast and simple Java Higher-order function lib. Support serial compute and parallel compute.
-
+Applies to Java and Android.
 Support
 ---
 + map
