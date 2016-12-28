@@ -18,86 +18,53 @@ buildscript {
     repositories {
         jcenter()
     }
+
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
+    }
 }
 
-plugins {
-    id "com.jfrog.bintray" version "1.7.3"
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
 
-group = project.property('GROUP_ID')
-version = project.property('PUBLIC_VERSION')
+apply plugin: 'com.jfrog.bintray'
 
 allprojects {
     repositories {
         jcenter()
     }
     apply plugin: 'maven'
-    apply plugin: 'maven-publish'
     apply plugin: 'java'
 }
 
-dependencies {
-    testCompile 'junit:junit:4.12'
+group = project.property('GROUP_ID')
+version = project.property('PUBLIC_VERSION')
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = project.property('LIBRARY_NAME')
+
+    publishedGroupId = group
+    libraryName = project.property('LIBRARY_NAME')
+    artifact = project.property('ARTIFACT_ID')//必须跟Model名一样
+
+    libraryDescription = 'java implement Higher-order function, support map, filter with parallel, android'
+
+    siteUrl = 'https://github.com/TangXiaoLv/HFunc'
+    gitUrl = 'https://github.com/TangXiaoLv/HFunc.git'
+
+    libraryVersion = version
+
+    developerId = 'tangxiaolv'
+    developerName = 'Tang XiaoLv'
+    developerEmail = 'imbatang@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
 }
 
-javadoc {
-    exclude "**/test/**"
-}
-
-publishing {
-    publications {
-        MyPublication(MavenPublication) {
-            from components.java
-            groupId group
-            artifactId project.property('ARTIFACT_ID')
-            version
-        }
-    }
-}
-
-bintray {
-    user = project.property('bintrayUser')
-    key = project.property('bintrayApiKey')
-    publications = ['MyPublication']
-    pkg {
-        repo = 'maven'
-        name = project.property('LIBRARY_NAME')
-        //userOrg = 'myorg' //An optional organization name when the repo belongs to one of the user's orgs
-        desc = 'what a fantastic package indeed!'
-        websiteUrl = 'https://github.com/TangXiaoLv/HFunc'
-        issueTrackerUrl = 'https://github.com/TangXiaoLv/HFunc/issues'
-        vcsUrl = 'https://github.com/TangXiaoLv/HFunc.git'
-        licenses = ['Apache-2.0']
-        labels = ['java', 'Higher-order function', 'map', 'filter', 'parallel']
-        publicDownloadNumbers = true
-        /*attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
-
-        githubRepo = 'bintray/gradle-bintray-plugin' //Optional Github repository
-        githubReleaseNotesFile = 'README.md' //Optional Github readme file*/
-
-        //Optional version descriptor
-        /*version {
-            name = '1.3-Final' //Bintray logical version name
-            desc = //Optional - Version-specific description'
-                    released  = //Optional - Date of the version release. 2 possible values: date in the format of 'yyyy-MM-dd'T'HH:mm:ss.SSSZZ' OR a java.util.Date instance
-                            vcsTag = '1.3.0'
-            attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin'] //Optional version-level attributes
-            //Optional configuration for GPG signing
-            gpg {
-                sign = true //Determines whether to GPG sign the files. The default is false
-                passphrase = 'passphrase' //Optional. The passphrase for GPG signing'
-            }
-            //Optional configuration for Maven Central sync of the version
-            mavenCentralSync {
-                sync = true //[Default: true] Determines whether to sync the version to Maven Central.
-                user = 'userToken' //OSS user token: mandatory
-                password = 'paasword' //OSS user password: mandatory
-                close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
-            }
-        }*/
-    }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.4.4'
-}
+// Place it at the end of the file
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'

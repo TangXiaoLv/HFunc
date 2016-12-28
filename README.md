@@ -1,13 +1,22 @@
 # HFunc
+[ ![Download](https://api.bintray.com/packages/tangxiaolv/maven/hfunc/images/download.svg) ](https://bintray.com/tangxiaolv/maven/hfunc/_latestVersion)
+
 English | [中文](https://github.com/TangXiaoLv/HFunc/blob/master/README_CN.md) 
 
 A fast and simple Java Higher-order function lib. Support serial compute and parallel compute.
 Applies to Java and Android.
+
 Support
 ---
 + map
 + filter
 + reduce
+
+Gradle
+---
+    dependencies {
+        compile 'com.library.tangxiaolv:hfunc:1.0.1'
+    }
 
 Guide
 ---

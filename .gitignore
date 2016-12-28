@@ -16,3 +16,5 @@ hs_err_pid*
 /build/tmp/jar/MANIFEST.MF
 /*.iml
 /gradle.properties
+/local.properties
+/build

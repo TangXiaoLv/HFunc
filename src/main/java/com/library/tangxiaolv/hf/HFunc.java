@@ -10,7 +10,7 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
  */
-package hf;
+package com.library.tangxiaolv.hf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +68,7 @@ public class HFunc {
      * @param func a function to apply to each item
      * @param <E>  collection item type
      * @param <R>  the result type
-     * @return List<R> the result transformed by the specified function
+     * @return the result transformed by the specified function
      */
     public static <E, R> List<R> map(Collection<E> c, Func1<E, R> func) {
         if (c == null || c.size() == 0 || func == null) {
@@ -90,7 +90,7 @@ public class HFunc {
      * @param func a function to apply to each item
      * @param <E>  collection item type
      * @param <R>  the result type
-     * @return List<R> the result transformed by the specified function
+     * @return the result transformed by the specified function
      */
     public static <E, R> List<R> mapParallel(Collection<E> c, final Func1<E, R> func) {
         return mapParallel(null, c, func);
@@ -105,7 +105,7 @@ public class HFunc {
      * @param func     a function to apply to each item
      * @param <E>      collection item type
      * @param <R>      the result type
-     * @return List<R> the result transformed by the specified function
+     * @return the result transformed by the specified function
      */
     public static <E, R> List<R> mapParallel(ExecutorService executor, Collection<E> c, final Func1<E, R> func) {
         if (c == null || c.size() == 0 || func == null) {
@@ -152,7 +152,7 @@ public class HFunc {
      * @param c    collection with date item
      * @param func a function to apply to each item
      * @param <E>  collection item type
-     * @return List<E> the result transformed by the specified function
+     * @return the result transformed by the specified function
      */
     public static <E> List<E> filter(Collection<E> c, Func1<E, Boolean> func) {
         if (c == null || c.size() == 0 || func == null) {
@@ -174,7 +174,7 @@ public class HFunc {
      * @param c    collection with date item
      * @param func a function to apply to each item
      * @param <E>  collection item type
-     * @return List<E> the result transformed by the specified function
+     * @return the result transformed by the specified function
      */
     public static <E> List<E> filterParallel(Collection<E> c, Func1<E, Boolean> func) {
         return filterParallel(null, c, func);
@@ -188,7 +188,7 @@ public class HFunc {
      * @param c        collection with date item
      * @param func     a function to apply to each item
      * @param <E>      collection item type
-     * @return List<E> the result transformed by the specified function
+     * @return the result transformed by the specified function
      */
     public static <E> List<E> filterParallel(ExecutorService executor, Collection<E> c, final Func1<E, Boolean> func) {
         if (c == null || c.size() == 0 || func == null) {

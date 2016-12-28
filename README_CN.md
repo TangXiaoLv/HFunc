@@ -1,4 +1,6 @@
 # HFunc
+[ ![Download](https://api.bintray.com/packages/tangxiaolv/maven/hfunc/images/download.svg) ](https://bintray.com/tangxiaolv/maven/hfunc/_latestVersion)
+
 中文 | [English](https://github.com/TangXiaoLv/HFunc/blob/master/README.md) 
 
 一个快速简单轻量级高阶函数库，支持串行，并行计算。适用于Java，Android。
@@ -7,6 +9,13 @@ Support
 + map
 + filter
 + reduce
+
+Gradle
+---
+    dependencies {
+        compile 'com.library.tangxiaolv:hfunc:1.0.1'
+    }
+
 
 Guide
 ---
