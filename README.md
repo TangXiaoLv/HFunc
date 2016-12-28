@@ -32,9 +32,27 @@ Guide
 <img src="img/1.png" height= "228" width="220">
 
 ```
-Assumptions: Each applies function consumes 10ms
 serial compute: 1078ms
+HFunc.map(c, new HFunc.Func1<Integer, String>() {
+    @Override
+    public String call(Integer item) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {}
+        return Integer.toString(item * 2);
+    }
+});
+
 parallel compute: 150ms
+HFunc.mapParallel(c, new HFunc.Func1<Integer, String>() {
+    @Override
+    public String call(Integer item) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {}
+        return Integer.toString(item * 2);
+    }
+});
 ```
 
 **filter:**
@@ -42,9 +60,27 @@ parallel compute: 150ms
 <img src="img/3.png" height= "228" width="220">
 
 ```
-Assumptions: Each applies function consumes 10ms
 serial compute: 1037ms
+HFunc.filter(c, new HFunc.Func1<Integer, Boolean>() {
+    @Override
+    public Boolean call(Integer item) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {}
+        return item % 2 != 0;
+    }
+});
+        
 parallel compute: 159ms
+HFunc.filterParallel(c, new HFunc.Func1<Integer, Boolean>() {
+    @Override
+    public Boolean call(Integer item) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {}
+        return item % 2 != 0;
+    }
+});
 ```
 
 [**reduce:**](https://research.google.com/archive/mapreduce.html)
@@ -52,9 +88,27 @@ parallel compute: 159ms
 <img src="img/2.png" height= "128" width="480">
 
 ```
-Assumptions: Each applies function consumes 10ms
 serial compute: 1061ms
+HFunc.reduce(c, new HFunc.Func2<Integer, Integer, Integer>() {
+    @Override
+    public Integer call(Integer merge, Integer next) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {}
+        return merge + next;
+    }
+});
+
 parallel compute: 239ms
+HFunc.reduceParallel(c, new HFunc.Func2<Integer, Integer, Integer>() {
+    @Override
+    public Integer call(Integer merge, Integer next) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {}
+        return merge + next;
+    }
+});
 ```
 
 LICENSE

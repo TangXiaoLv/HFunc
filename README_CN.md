@@ -30,9 +30,28 @@ Guide
 <img src="img/1.png" height= "228" width="220">
 
 ```
-假设: 每个应用方法消耗10ms
 串行计算: 1078ms
+HFunc.map(c, new HFunc.Func1<Integer, String>() {
+    @Override
+    public String call(Integer item) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {}
+        return Integer.toString(item * 2);
+    }
+});
+
+
 并行计算: 150ms
+HFunc.mapParallel(c, new HFunc.Func1<Integer, String>() {
+    @Override
+    public String call(Integer item) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {}
+        return Integer.toString(item * 2);
+    }
+});
 ```
 
 **filter:**
@@ -40,9 +59,27 @@ Guide
 <img src="img/3.png" height= "228" width="220">
 
 ```
-假设: 每个应用方法消耗10ms
 串行计算: 1037ms
+HFunc.filter(c, new HFunc.Func1<Integer, Boolean>() {
+    @Override
+    public Boolean call(Integer item) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {}
+        return item % 2 != 0;
+    }
+});
+   
 并行计算: 159ms
+HFunc.filterParallel(c, new HFunc.Func1<Integer, Boolean>() {
+    @Override
+    public Boolean call(Integer item) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {}
+        return item % 2 != 0;
+    }
+});
 ```
 
 [**reduce:**](https://research.google.com/archive/mapreduce.html)
@@ -50,9 +87,27 @@ Guide
 <img src="img/2.png" height= "128" width="480">
 
 ```
-假设: 每个应用方法消耗10ms
 串行计算: 1061ms
+HFunc.reduce(c, new HFunc.Func2<Integer, Integer, Integer>() {
+    @Override
+    public Integer call(Integer merge, Integer next) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {}
+        return merge + next;
+    }
+});
+
 并行计算: 239ms
+HFunc.reduceParallel(c, new HFunc.Func2<Integer, Integer, Integer>() {
+    @Override
+    public Integer call(Integer merge, Integer next) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {}
+        return merge + next;
+    }
+});
 ```
 
 LICENSE
