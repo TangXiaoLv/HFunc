@@ -31,7 +31,7 @@ Guide
 
 ```
 串行计算: 1078ms
-HFunc.map(c, new HFunc.Func1<Integer, String>() {
+List<String> result = HFunc.map(c, new HFunc.Func1<Integer, String>() {
     @Override
     public String call(Integer item) {
         try {
@@ -43,7 +43,7 @@ HFunc.map(c, new HFunc.Func1<Integer, String>() {
 
 
 并行计算: 150ms
-HFunc.mapParallel(c, new HFunc.Func1<Integer, String>() {
+List<String> result = HFunc.mapParallel(c, new HFunc.Func1<Integer, String>() {
     @Override
     public String call(Integer item) {
         try {
@@ -60,7 +60,7 @@ HFunc.mapParallel(c, new HFunc.Func1<Integer, String>() {
 
 ```
 串行计算: 1037ms
-HFunc.filter(c, new HFunc.Func1<Integer, Boolean>() {
+List<Integer> result = HFunc.filter(c, new HFunc.Func1<Integer, Boolean>() {
     @Override
     public Boolean call(Integer item) {
         try {
@@ -71,7 +71,7 @@ HFunc.filter(c, new HFunc.Func1<Integer, Boolean>() {
 });
    
 并行计算: 159ms
-HFunc.filterParallel(c, new HFunc.Func1<Integer, Boolean>() {
+List<Integer> result = HFunc.filterParallel(c, new HFunc.Func1<Integer, Boolean>() {
     @Override
     public Boolean call(Integer item) {
         try {
@@ -88,7 +88,7 @@ HFunc.filterParallel(c, new HFunc.Func1<Integer, Boolean>() {
 
 ```
 串行计算: 1061ms
-HFunc.reduce(c, new HFunc.Func2<Integer, Integer, Integer>() {
+Integer result = HFunc.reduce(c, new HFunc.Func2<Integer, Integer, Integer>() {
     @Override
     public Integer call(Integer merge, Integer next) {
         try {
@@ -99,7 +99,7 @@ HFunc.reduce(c, new HFunc.Func2<Integer, Integer, Integer>() {
 });
 
 并行计算: 239ms
-HFunc.reduceParallel(c, new HFunc.Func2<Integer, Integer, Integer>() {
+Integer result = HFunc.reduceParallel(c, new HFunc.Func2<Integer, Integer, Integer>() {
     @Override
     public Integer call(Integer merge, Integer next) {
         try {
